@@ -9,7 +9,8 @@
 
 namespace myImage
 {
-  class Image {
+  class Image
+  {
   private:
     uint16_t width;
     uint16_t height;
@@ -17,14 +18,16 @@ namespace myImage
     uint8_t depth;
     
   public:
-    Image(uint16_t w, uint16_t h, uint16_t d, uint8_t dep) {
+    Image( uint16_t w, uint16_t h, uint16_t d, uint8_t dep )
+    {
       width = w;
       height = h;
       dpi = d;
       depth = dep;
     }
     
-    std::string toString () {
+    std::string toString ()
+    {
       std::string ret =
 	std::to_string(width) + "x" + std::to_string(height)
 	+ ", " + std::to_string(dpi) + " PPI, " +
@@ -34,19 +37,22 @@ namespace myImage
     };
   };
   
-  std::vector<std::string> split(std::string s, char delimiter)
+  std::vector<std::string> split( std::string s, char delimiter )
   {
     std::vector<std::string> tokens;
     std::string token;
     std::stringstream ss(s);
-    while (std::getline(ss, token, delimiter))
+
+    while (std::getline( ss, token, delimiter ))
       {
 	tokens.push_back(token);
       }
+
     return tokens;
   }
   
-  Image imgcase(std::string optarg) {
+  Image imgcase( std::string optarg )
+  {
     std::vector<std::string> parsedflags = split(optarg, ',');
     
     Image img = {uint16_t (std::stoi(parsedflags[0], nullptr, 10)),
@@ -87,19 +93,22 @@ int main( int argc, char **argv )
       }
 
   std::cout << "Integers: ";
-  for (auto i : intvector) {
-    std::cout << i + "\n";
-  }
-
+  for ( auto i : intvector )
+    {
+      std::cout << i + "\n";
+    }
+  
   std::cout << "Strings: ";
-  for (auto i : strvector) {
-    std::cout << i + "\n";
-  }  
+  for ( auto i : strvector )
+    {
+      std::cout << i + "\n";
+    }  
 
   std::cout << "Images: \n";
-  for (auto i : imgvector) {
-    std::cout << i.toString() + "\n";
-  }
+  for ( auto i : imgvector )
+    {
+      std::cout << i.toString() + "\n";
+    }
 
   return 0;
 }
