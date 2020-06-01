@@ -6,7 +6,7 @@ namespace myImage {
   class Image {
   public:
  
-    Image(uint16_t w, uint16_t h, uint16_t d, uint8_t dep);
+    Image(uint16_t width_, uint16_t height_, uint16_t dpi_, uint8_t depth_);
 
     std::string toString () const;
 
@@ -14,10 +14,10 @@ namespace myImage {
     uint16_t getWidth() const;
     uint16_t getDPI() const;
     uint8_t getDepth() const;
-    void setHeight(uint16_t val);
-    void setWidth(uint16_t val);
-    void setDPI(uint16_t val);
-    void setDepth(uint8_t val);
+    void setHeight(const uint16_t val);
+    void setWidth(const uint16_t val);
+    void setDPI(const uint16_t val);
+    void setDepth(const uint8_t val);
 
   private:
     uint16_t width;

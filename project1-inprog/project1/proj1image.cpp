@@ -9,7 +9,20 @@
 #include <sstream>
 
 #include "proj1header.h"
+
 using namespace myImage;
+
+myImage::Image::Image(
+		      uint16_t width_,
+		      uint16_t height_,
+		      uint16_t dpi_,
+		      uint8_t depth_) :
+  width{width_},
+  height{height_},
+  dpi{dpi_},
+  depth{depth_}
+{
+}
 
 std::string
 myImage::Image::toString ()
@@ -53,25 +66,25 @@ myImage::Image::getDepth()
 }
   
 void
-myImage::Image::setWidth(uint16_t val)
+myImage::Image::setWidth(const uint16_t val)
 {
   this->width = val;
 }
   
 void
-myImage::Image::setHeight(uint16_t val)
+myImage::Image::setHeight(const uint16_t val)
 {
   this->height = val;
 }
   
 void
-myImage::Image::setDPI(uint16_t val)
+myImage::Image::setDPI(const uint16_t val)
 {
   this->dpi = val;
 }
   
 void
-myImage::Image::setDepth(uint8_t val)
+myImage::Image::setDepth(const uint8_t val)
 {
   this->depth = val;
 }
