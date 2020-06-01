@@ -9,24 +9,13 @@
 #include <sstream>
 
 #include "proj1header.h"
-
+#include "proj1image.cpp"
 using namespace myImage;
-
-std::string
-Image::toString ()
-  const
-{
-  std::string ret =
-    std::to_string(width) + "x" +
-    std::to_string(height) +", " +
-    std::to_string(dpi) + " PPI, " +
-    std::to_string(depth) + " BPC";
-    
-  return ret;
-}
   
-std::vector<std::string> split(const std::string &s, char delimiter)
-    
+std::vector<std::string>
+myImage::split(
+	       const std::string &s,
+	       char delimiter) 
 {
   std::vector<std::string> tokens;
   std::string token;
@@ -41,12 +30,12 @@ std::vector<std::string> split(const std::string &s, char delimiter)
 }
   
 Image
-imgcase(
+myImage::imgcase(
 	const std::string &optarg )
 {
   std::vector<std::string> parsedflags = myImage::split(optarg, ',');
-
-  Image img{0,0,0,0};
+  
+  myImage::Image img{0,0,0,0};
     
   try {
     const auto tmp = std::stoul(parsedflags.at(0));
@@ -88,7 +77,7 @@ imgcase(
 }
 
 uint16_t
-intcase(
+myImage::intcase(
 	const std::string &optarg )
 {
   const auto tmp = std::stoul(optarg);

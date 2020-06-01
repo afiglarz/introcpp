@@ -1,6 +1,6 @@
 CXXFLAGS = -Wall -Wextra -pedantic -Wconversion -Wsign-conversion -std=c++11
 
-SOURCES = proj1.cpp
+SOURCES = proj1.cpp proj1image.cpp
 HEADERS = proj1header.h
 OBJECTS = $(SOURCES:%.cpp=%.o)
 BINARY = project1
