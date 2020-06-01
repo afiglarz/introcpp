@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 #include <vector>
 #include <sstream>
@@ -97,6 +98,11 @@ myImage::intcase(
 int main( int argc, char **argv )
 {
 
+  const unsigned char PNGBytes[8] = {0x89, 0x50, 0x4E, 0x47,
+				     0x0D, 0x0A, 0x1A, 0x0A};
+  const unsigned char JPEGBytes[2] = {0xFF, 0xD8};
+  const unsigned char PDFBytes[4] = {0x25, 0x50, 0x44, 0x46};
+			     
   //Get File Extension of File: 
   const std::string filename = argv[1];
   const std::size_t found = filename.find_last_of(".");
@@ -105,19 +111,21 @@ int main( int argc, char **argv )
 
   //Reading in File:
 
-  // std::ifstream myfile(filename, std::ios::in | std::ios::binary);
+  std::ifstream myfile(filename, std::ios::in | std::ios::binary);
+  myfile.seekg(0, std::ios::beg);
+  unsigned char magic[8] = {0}; 
+  myfile.read((char*)magic, sizeof(magic));
 
-  //char buffer[8];
-    
-  //myfile.read(buffer, 8);
-
-  //std::cout << std::hex << buffer;
-  //printf("%02hhx", buffer);
-
-  //std::cout << "\n";
-
-  // myfile.close();
-    
+  if (memcmp(magic, PNGBytes, sizeof(magic)) == 0) {
+    std::cout << "File is a PNG\n";
+  } else if (memcmp(magic, JPEGBytes, sizeof(magic) / 4) == 0) {
+    std::cout << "File is a JPEG\n";
+  } else if (memcmp(magic, PDFBytes, sizeof(magic) / 2) == 0) {
+    std::cout << "File is a PDF\n";
+  } else {
+    std::cout << "File is not a PNG, JPG or PDF\n";
+  }
+  
   std::vector<uint16_t> intvector{};
   std::vector<std::string> strvector{};
   std::vector<myImage::Image> imgvector{};
