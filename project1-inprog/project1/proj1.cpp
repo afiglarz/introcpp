@@ -48,7 +48,7 @@ myImage::imgcase(
     img.setWidth(w);
   } catch (const std::out_of_range &) {
     std::cout << "Out of Range\n";
-    exit(-1);
+    return myImage::Image{0,0,0,0};
   }
     
   try {
@@ -57,7 +57,7 @@ myImage::imgcase(
     img.setHeight(h);
   } catch (const std::out_of_range &) {
     std::cout << "Out of Range\n";
-    exit(-1);
+    return myImage::Image{0,0,0,0};
   }
     
   try {
@@ -66,7 +66,7 @@ myImage::imgcase(
     img.setDPI(dpi);
   } catch (const std::out_of_range &) {
     std::cout << "Out of Range\n";
-    exit(-1);
+    return myImage::Image{0,0,0,0};
   }
     
   try {
@@ -75,7 +75,7 @@ myImage::imgcase(
     img.setDepth(dep);
   } catch (const std::out_of_range &) {
     std::cout << "Out of Range\n";
-    exit(-1);
+    return myImage::Image{0,0,0,0};
   }
   return img; 
 }
@@ -154,7 +154,12 @@ int main( int argc, char **argv )
 	strvector.push_back(optarg);
 	break;
       case 'i':
-	imgvector.push_back(myImage::imgcase(optarg));
+	if (myImage::imgcase(optarg).equals(myImage::Image{0,0,0,0})) {
+	  std::cout << "Not allowed an 'Empty' or incomplete Image.\n";
+	  return 0;
+	} else {
+	  imgvector.push_back(myImage::imgcase(optarg));
+	}
 	break;
       case 'o':
 	writetofile = true;

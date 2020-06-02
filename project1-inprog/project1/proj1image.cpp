@@ -89,3 +89,16 @@ myImage::Image::setDepth(const uint8_t val)
   this->depth = val;
 }
 
+bool
+myImage::Image::equals(myImage::Image img)
+{
+  if (this->width == img.getWidth() &&
+      this->height == img.getHeight() &&
+      this->dpi == img.getDPI() &&
+      this->depth == img.getDepth()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+

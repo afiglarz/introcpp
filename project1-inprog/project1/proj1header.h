@@ -19,6 +19,8 @@ namespace myImage {
     void setDPI(const uint16_t val);
     void setDepth(const uint8_t val);
 
+    bool equals(Image img);
+
   private:
     uint16_t width;
     uint16_t height;
