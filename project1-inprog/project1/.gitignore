@@ -1,2 +1,5 @@
 project1
 proj1.o
+dynamic_proj1
+libproject1image.so
+proj1image.o

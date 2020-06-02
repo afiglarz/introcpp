@@ -13,7 +13,8 @@
 #include "proj1header.h"
 
 using namespace myImage;
-  
+
+// Used to split a string into a Vector of tokens given a delimiter
 std::vector<std::string>
 myImage::split(
 	       const std::string &s,
@@ -27,77 +28,80 @@ myImage::split(
     {
       tokens.push_back(token);
     }
-
   return tokens;
 }
-  
+
+// Used to handle the -i flag
 Image
 myImage::imgcase(
 		 const std::string &optarg )
 {
+  // Splitting the arguments to the image case
   std::vector<std::string> parsedflags = myImage::split(optarg, ',');
-  
   myImage::Image img{0,0,0,0};
-    
+
+  // Making sure 4 arguments were passed to an image
+  // Otherwie catch an out_of_range exception and exit
   try {
     const auto tmp = std::stoul(parsedflags.at(0));
     uint16_t w = static_cast<uint16_t>(tmp);
     img.setWidth(w);
-      
   } catch (const std::out_of_range &) {
-    // The first one does not get hit, but the next three do - why?
-    //std::cout << "Out of Range\n";
+    std::cout << "Out of Range\n";
+    exit(-1);
   }
     
   try {
     const auto tmp = std::stoul(parsedflags.at(1));
     uint16_t h = static_cast<uint16_t>(tmp);
     img.setHeight(h);
-      
   } catch (const std::out_of_range &) {
-    //std::cout << "Out of Range\n";
+    std::cout << "Out of Range\n";
+    exit(-1);
   }
     
   try {
     const auto tmp = std::stoul(parsedflags.at(2));
     uint16_t dpi = static_cast<uint16_t>(tmp);
     img.setDPI(dpi);
-      
   } catch (const std::out_of_range &) {
-    //std::cout << "Out of Range\n";
+    std::cout << "Out of Range\n";
+    exit(-1);
   }
     
   try {
     const auto tmp = std::stoul(parsedflags.at(3));
     uint8_t dep = static_cast<uint8_t>(tmp);
     img.setDepth(dep);
-      
   } catch (const std::out_of_range &) {
-    // std::cout << "Out of Range\n";
+    std::cout << "Out of Range\n";
+    exit(-1);
   }
-    
   return img; 
 }
 
+// Used to handle the -x flag
 uint16_t
 myImage::intcase(
 		 const std::string &optarg )
 {
+  // Auto automatically determines the type of the variable
   const auto tmp = std::stoul(optarg);
 
+  // Making sure overflow does not happen
   if (tmp > UINT16_MAX) {
     // error
-    std::cout << "Value is over UINT16_MAX - Converting to '0'\n";
-    return 0;
+    std::cout << "Error-Value is over UINT16_MAX\n";
+    exit(1);
   }
-
+  // Static cast instead of traditional c-style casts
   uint16_t convert = static_cast<uint16_t>(tmp);
   return convert;
 }
 
 int main( int argc, char **argv )
 {
-
+  // Magic bytes for PNG, JPEG and PDF:
   const unsigned char PNGBytes[8] = {0x89, 0x50, 0x4E, 0x47,
 				     0x0D, 0x0A, 0x1A, 0x0A};
   const unsigned char JPEGBytes[2] = {0xFF, 0xD8};
@@ -109,7 +113,7 @@ int main( int argc, char **argv )
   const std::string fileExt = filename.substr(found+1);  
   //std::cout << fileExt + "\n";
 
-  //Reading in File:
+  //Reading in File and checking magic bytes for PNG, JPEG and PDF
 
   std::ifstream myfile(filename, std::ios::in | std::ios::binary);
   myfile.seekg(0, std::ios::beg);
@@ -125,17 +129,21 @@ int main( int argc, char **argv )
   } else {
     std::cout << "File is not a PNG, JPG or PDF\n";
   }
-  
+
+  // Vectors holding the flag arguments:
   std::vector<uint16_t> intvector{};
   std::vector<std::string> strvector{};
   std::vector<myImage::Image> imgvector{};
 
+  // If a -o flag is used then these two variables get updated
   bool writetofile = false;
   std::string savepath{};
-  
+
+  // Different flag options:
   static const char options[] {"x:s:i:o:"};
   int c{};
-  
+
+  // Getopt logic:
   while ((c = getopt(argc, argv, options)) != -1) 
     switch (c)
       {
@@ -158,6 +166,7 @@ int main( int argc, char **argv )
 	return 1;
       }
 
+  // Writes all output to file specificed with -o
   if (writetofile == true) {
     std::ofstream output;
     output.open(savepath);
@@ -191,23 +200,24 @@ int main( int argc, char **argv )
     
   } else {
 
-  std::cout << "Integers: \n";
-  for ( const auto &i : intvector )
-    {
-      std::cout << std::to_string(i) + "\n";
-    }
+    // Write all output to stdout
+    std::cout << "Integers: \n";
+    for ( const auto &i : intvector )
+      {
+	std::cout << std::to_string(i) + "\n";
+      }
   
-  std::cout << "Strings: \n";
-  for ( const auto &i : strvector )
-    {
-      std::cout << i + "\n";
-    }  
+    std::cout << "Strings: \n";
+    for ( const auto &i : strvector )
+      {
+	std::cout << i + "\n";
+      }  
 
-  std::cout << "Images: \n";
-  for ( const auto &i : imgvector )
-    {
-      std::cout << i.toString() + "\n";
-    }
+    std::cout << "Images: \n";
+    for ( const auto &i : imgvector )
+      {
+	std::cout << i.toString() + "\n";
+      }
   }
 
   return 0;
