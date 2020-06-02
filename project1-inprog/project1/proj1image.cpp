@@ -13,10 +13,10 @@
 using namespace myImage;
 
 myImage::Image::Image(
-		      uint16_t width_,
-		      uint16_t height_,
-		      uint16_t dpi_,
-		      uint8_t depth_) :
+			  uint16_t width_,
+			  uint16_t height_,
+			  uint16_t dpi_,
+			  uint8_t depth_) :
   width{width_},
   height{height_},
   dpi{dpi_},
@@ -29,11 +29,11 @@ myImage::Image::toString ()
   const
 {
   std::string ret =
-    std::to_string(width) + "x" +
-    std::to_string(height) +", " +
-    std::to_string(dpi) + " PPI, " +
-    std::to_string(depth) + " BPC";
-    
+	std::to_string(width) + "x" +
+	std::to_string(height) +", " +
+	std::to_string(dpi) + " PPI, " +
+	std::to_string(depth) + " BPC";
+	
   return ret;
 }
   
@@ -93,12 +93,12 @@ bool
 myImage::Image::equals(myImage::Image img)
 {
   if (this->width == img.getWidth() &&
-      this->height == img.getHeight() &&
-      this->dpi == img.getDPI() &&
-      this->depth == img.getDepth()) {
-    return true;
+	  this->height == img.getHeight() &&
+	  this->dpi == img.getDPI() &&
+	  this->depth == img.getDepth()) {
+	return true;
   } else {
-    return false;
+	return false;
   }
 }
 
