@@ -9,6 +9,7 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <array>
 
 #include "proj1header.h"
 
@@ -17,14 +18,14 @@ using namespace myImage;
 // Used to split a string into a Vector of tokens given a delimiter
 std::vector<std::string>
 myImage::split(
-		   const std::string &s,
-		   char delimiter) 
+		const std::string &s,
+		char delimiter) 
 {
-  std::vector<std::string> tokens;
-  std::string token;
-  std::stringstream ss(s);
+std::vector<std::string> tokens;
+std::string token;
+std::stringstream ss(s);
 
-  while (std::getline( ss, token, delimiter ))
+while (std::getline( ss, token, delimiter ))
 	{
 	  tokens.push_back(token);
 	}
@@ -34,45 +35,37 @@ myImage::split(
 // Used to handle the -i flag
 Image
 myImage::imgcase(
-		 const std::string &optarg )
+	const std::string &optarg )
 {
   // Splitting the arguments to the image case
-  std::vector<std::string> parsedflags = myImage::split(optarg, ',');
-  myImage::Image img{0,0,0,0};
+std::vector<std::string> parsedflags = myImage::split(optarg, ',');
+myImage::Image img{0,0,0,0};
 
   // Making sure 4 arguments were passed to an image
   // Otherwie catch an out_of_range exception and exit
+try {
+	img.setWidth(static_cast<uint16_t>(std::stoul(parsedflags.at(0))));
+} catch (const std::out_of_range &) {
+	std::cout << "Out of Range\n";
+	return myImage::Image{0,0,0,0};
+}
+	
   try {
-	const auto tmp = std::stoul(parsedflags.at(0));
-	uint16_t w = static_cast<uint16_t>(tmp);
-	img.setWidth(w);
+	img.setHeight(static_cast<uint16_t>(std::stoul(parsedflags.at(1))));
   } catch (const std::out_of_range &) {
 	std::cout << "Out of Range\n";
 	return myImage::Image{0,0,0,0};
   }
 	
   try {
-	const auto tmp = std::stoul(parsedflags.at(1));
-	uint16_t h = static_cast<uint16_t>(tmp);
-	img.setHeight(h);
+	img.setDPI(static_cast<uint16_t>(std::stoul(parsedflags.at(2))));
   } catch (const std::out_of_range &) {
 	std::cout << "Out of Range\n";
 	return myImage::Image{0,0,0,0};
   }
 	
   try {
-	const auto tmp = std::stoul(parsedflags.at(2));
-	uint16_t dpi = static_cast<uint16_t>(tmp);
-	img.setDPI(dpi);
-  } catch (const std::out_of_range &) {
-	std::cout << "Out of Range\n";
-	return myImage::Image{0,0,0,0};
-  }
-	
-  try {
-	const auto tmp = std::stoul(parsedflags.at(3));
-	uint8_t dep = static_cast<uint8_t>(tmp);
-	img.setDepth(dep);
+	img.setDepth(static_cast<uint8_t>(std::stoul(parsedflags.at(3))));
   } catch (const std::out_of_range &) {
 	std::cout << "Out of Range\n";
 	return myImage::Image{0,0,0,0};
@@ -83,15 +76,16 @@ myImage::imgcase(
 // Used to handle the -x flag
 uint16_t
 myImage::intcase(
-		 const std::string &optarg )
+	 const std::string &optarg )
 {
   // Auto automatically determines the type of the variable
   const auto tmp = std::stoul(optarg);
 
   // Making sure overflow does not happen
   if (tmp > UINT16_MAX) {
-	// error
 	std::cout << "Error-Value is over UINT16_MAX\n";
+	//containsoverflow = true;
+	//return 0;
 	exit(1);
   }
   // Static cast instead of traditional c-style casts
@@ -102,33 +96,51 @@ myImage::intcase(
 int main( int argc, char **argv )
 {
   // Magic bytes for PNG, JPEG and PDF:
-  const unsigned char PNGBytes[8] = {0x89, 0x50, 0x4E, 0x47,
-					 0x0D, 0x0A, 0x1A, 0x0A};
-  const unsigned char JPEGBytes[2] = {0xFF, 0xD8};
-  const unsigned char PDFBytes[4] = {0x25, 0x50, 0x44, 0x46};
-				 
-  //Get File Extension of File: 
-  const std::string filename = argv[1];
-  const std::size_t found = filename.find_last_of(".");
-  const std::string fileExt = filename.substr(found+1);  
-  //std::cout << fileExt + "\n";
+std::array<uint8_t, 8> PNGBytes{0x89, 0x50, 0x4E, 0x47, 
+								0x0D, 0x0A, 0x1A, 0x0A};
+std::array<uint8_t, 2> JPEGBytes{0xFF, 0xD8};
+std::array<uint8_t, 4> PDFBytes{0x25, 0x50, 0x44, 0x46};
 
-  //Reading in File and checking magic bytes for PNG, JPEG and PDF
+bool containsfile = false;
+//bool containsoverflow = false;
+		
+if (argc < 2) {
+	std::cout << "No arguments given\n";
+	return 0;
+} else if (argv[1][0] != '-') {
+	// Then it contains a file as the first arg
+	optind++;
+	containsfile = true;
+}
 
-  std::ifstream myfile(filename, std::ios::in | std::ios::binary);
-  myfile.seekg(0, std::ios::beg);
-  unsigned char magic[8] = {0}; 
-  myfile.read((char*)magic, sizeof(magic));
+if (containsfile) {
+	//Reading in File and checking magic bytes for PNG, JPEG and PDF
+	const std::string filename = argv[1];
+	std::ifstream myfile(filename, std::ios::in | std::ios::binary);
+	// Get File Size
+  	
+  	myfile.seekg(0, std::ios::end);
+  	const auto filesize = myfile.tellg();
 
-  if (memcmp(magic, PNGBytes, sizeof(magic)) == 0) {
-	std::cout << "File is a PNG\n";
-  } else if (memcmp(magic, JPEGBytes, sizeof(magic) / 4) == 0) {
-	std::cout << "File is a JPEG\n";
-  } else if (memcmp(magic, PDFBytes, sizeof(magic) / 2) == 0) {
-	std::cout << "File is a PDF\n";
-  } else {
-	std::cout << "File is not a PNG, JPG or PDF\n";
-  }
+  	if (filesize >= 8) {
+
+ 		myfile.seekg(0, std::ios::beg);
+ 		unsigned char magic[8] = {0}; 
+ 		myfile.read((char*)magic, sizeof(magic));
+
+  		if (memcmp(magic, &PNGBytes, PNGBytes.size()) == 0) {
+			std::cout << "File is a PNG\n";
+  		} else if (memcmp(magic, &JPEGBytes, JPEGBytes.size()) == 0) {
+			std::cout << "File is a JPEG\n";
+  		} else if (memcmp(magic, &PDFBytes, PDFBytes.size()) == 0) {
+			std::cout << "File is a PDF\n";
+  		} else if (containsfile) {
+			std::cout << "File is not a PNG, JPG or PDF\n";
+  		}
+	} else {
+		std::cout << "Filesize is less than 8 bytes" << "\n";
+	}
+}
 
   // Vectors holding the flag arguments:
   std::vector<uint16_t> intvector{};
@@ -148,6 +160,10 @@ int main( int argc, char **argv )
 	switch (c)
 	  {
 	  case 'x':
+	/*  if (containsoverflow) {
+	  	std::cout << "Provided Integer results in overflow\n";
+	  	return 0;
+	  } */
 	intvector.push_back(myImage::intcase(optarg));
 	break;
 	  case 's':

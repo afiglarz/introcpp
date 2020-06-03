@@ -1,6 +1,11 @@
 #ifndef PROJ1HEADER_H_
 #define PROJ1HEADER_H_
 
+#include <ctype.h>
+
+#include <string>
+#include <vector>
+
 namespace myImage {
 
   class Image {

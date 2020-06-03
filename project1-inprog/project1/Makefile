@@ -1,4 +1,5 @@
-CXXFLAGS = -Wall -Wextra -pedantic -Wconversion -Wsign-conversion -std=c++11
+CXXFLAGS = -Wall -Wextra -pedantic -Wconversion -Wsign-conversion -std=c++11 -fPIC
+LDFLAGS = -L. -lproject1image
 
 SOURCES = proj1.cpp proj1image.cpp
 OBJECTS = $(SOURCES:%.cpp=%.o)
@@ -14,8 +15,8 @@ $(BINARY): $(OBJECTS)
 $(LIB): proj1image.o
 	$(CXX) -shared -fPIC proj1image.o -o libproject1image.so
 
-$(DYNAMIC): proj1.o libproject1image.so
-	$(CXX) proj1.o -o dynamic_proj1 -L. -lproject1image
+$(DYNAMIC): $(LIB) proj1.o
+	$(CXX) proj1.o -o dynamic_proj1 $(LDFLAGS)
 
 clean:
 	$(RM) $(BINARY) $(OBJECTS) $(LIB) $(DYNAMIC)
