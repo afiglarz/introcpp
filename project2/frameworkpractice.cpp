@@ -25,9 +25,13 @@ int main( int argc, char** argv )
 	}
 	
 	std::string filename = argv[1];
+	//std::string directory = "/Users/aef1/NIST/introcpp/project2/" + filename;
 	std::cout << filename << "\n";
 
-	auto img = myOpenImage(filename);
+	auto img = myOpenImage(filename).get();
+	BiometricEvaluation::Image::CompressionAlgorithm type_c = (*img).getCompressionAlgorithm();
+
+	std::cout << static_cast<std::underlying_type<BiometricEvaluation::Image::CompressionAlgorithm>::type>(type_c) << "\n";
 
 	return 0;
 }
