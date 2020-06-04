@@ -4,7 +4,23 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <be_image_image.h>
+#include <frameworkpractice.h>
+
+//namespace BE = BiometricEvaluation;
+
+namespace BiometricEvaluation
+{
+	namespace Image
+	{
+	std::shared_ptr<BiometricEvaluation::Image::Image>
+	BiometricEvaluation::Image::myOpenImage(
+		std::string s)
+		{	
+			return BiometricEvaluation::Image::Image::openImage(s);	
+		}
+	}
+}
+
 
 int main( int argc, char** argv ) 
 {
@@ -12,13 +28,11 @@ int main( int argc, char** argv )
 		std::cerr << "Must Provide an image or a Directory\n";
 		return -1;
 	}
-
-	//BiometricEvaluation::Image::Image::Image img{};
-
+	
 	std::string filename = argv[1];
 	std::cout << filename << "\n";
 
-	//const auto data = filename.getData();
+	auto img = BiometricEvaluation::Image::myOpenImage(filename);
 
 	return 0;
 }
