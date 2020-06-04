@@ -8,18 +8,13 @@
 
 //namespace BE = BiometricEvaluation;
 
-namespace BiometricEvaluation
-{
-	namespace Image
-	{
-	std::shared_ptr<BiometricEvaluation::Image::Image>
-	myOpenImage(
-		std::string s)
-		{	
-			return BiometricEvaluation::Image::Image::openImage(s);	
-		}
+std::shared_ptr<BiometricEvaluation::Image::Image>
+myOpenImage(
+	std::string s)
+	{	
+		return BiometricEvaluation::Image::Image::openImage(s);	
 	}
-}
+
 
 
 int main( int argc, char** argv ) 
@@ -32,7 +27,7 @@ int main( int argc, char** argv )
 	std::string filename = argv[1];
 	std::cout << filename << "\n";
 
-	auto img = BiometricEvaluation::Image::myOpenImage(filename);
+	auto img = myOpenImage(filename);
 
 	return 0;
 }
