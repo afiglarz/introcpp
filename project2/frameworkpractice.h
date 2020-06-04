@@ -7,7 +7,7 @@ namespace BiometricEvaluation
 {
 	namespace Image
 	{
-		std::shared_ptr<BiometricEvaluation::Image::Image>BiometricEvaluation::Image::myOpenImage(std::string s);
+		std::shared_ptr<BiometricEvaluation::Image::Image>myOpenImage(std::string s);
 	}
 }
 

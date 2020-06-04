@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <frameworkpractice.h>
+#include "frameworkpractice.h"
 
 //namespace BE = BiometricEvaluation;
 
@@ -13,7 +13,7 @@ namespace BiometricEvaluation
 	namespace Image
 	{
 	std::shared_ptr<BiometricEvaluation::Image::Image>
-	BiometricEvaluation::Image::myOpenImage(
+	myOpenImage(
 		std::string s)
 		{	
 			return BiometricEvaluation::Image::Image::openImage(s);	
