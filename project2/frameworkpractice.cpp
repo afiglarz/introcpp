@@ -1,4 +1,9 @@
 // Practice project getting used to the biomeval framework
+
+// Current Issues:
+// - If you give it a directory, make sure you give the ending "/" character,
+// - the current implementation checks for that to recognize a directory.
+
 #include <dirent.h>
 #include <sys/types.h>
 
@@ -9,16 +14,69 @@
 
 #include "frameworkpractice.h"
 
-//namespace BE = BiometricEvaluation;
+namespace BE = BiometricEvaluation;
 
-// Write a summary method that prints general image information?
+// Function that generates all the information to a string that you can
+// then print to stdout
+std::string 
+generateInfo(
+	std::string filename) 
+{
+	namespace BE = BiometricEvaluation;
+	
+	std::string output{};
 
-std::shared_ptr<BiometricEvaluation::Image::Image>
-myOpenImage(
-	std::string s)
-	{	
-		return BiometricEvaluation::Image::Image::openImage(s);	
-	}
+	auto img = BE::Image::Image::openImage(filename).get();
+	
+	// Get Compression Algorithm from image
+	BE::Image::CompressionAlgorithm compalg = 
+	(*img).getCompressionAlgorithm();
+
+	// Get Resolution of Image 
+	BE::Image::Resolution res = (*img).getResolution();
+
+	// Get Data of Image -- Not Raw -- Is encoded
+	BE::Memory::uint8Array data = (*img).getData();
+
+	// Get Colordepth
+	uint32_t colordepth = (*img).getColorDepth();
+
+	// Get bitdepth
+	uint16_t bitdepth = (*img).getBitDepth();
+
+	// Determines if it has an alpha channel
+	bool hasalpha = (*img).hasAlphaChannel();
+
+	// Gets Identifier/Filename - Sometimes messes up the name of file?
+	std::string id = (*img).getIdentifier();
+
+	// Adds Filename
+	output = output + "ID/Filename: " + id + "\n";
+
+	// Adds Compression Algorithm
+	output = output + "Compression Algorithm: " +
+	std::to_string(static_cast<std::underlying_type
+	<BE::Image::CompressionAlgorithm>::type>(compalg)) + "\n";
+
+	// Print out Resolution of Image
+	output = output + "Resolution of Image: " + to_string(res) + "\n";
+
+	// Print out ColorDepth of Image
+	output = output + "Color Depth of Image: " + std::to_string(colordepth) 
+	+ "\n";
+
+	// Print out BitDepth of Image
+	output = output + "Bit Depth of Image: " + std::to_string(bitdepth) + "\n";
+
+	// Print out Data Size of Image
+	output = output + "Data Size of Image: " + std::to_string(data.size()) 
+	+ "\n";
+
+	// Print out Whether it has an alpha channel
+	output = output + "Alpha Channel: " + std::to_string(hasalpha) + "\n";
+
+	return output;
+}
 
 int main( int argc, char** argv ) 
 {
@@ -33,84 +91,8 @@ int main( int argc, char** argv )
 
 	if (ifdir == std::string::npos) {
 		// its a file and not a dir:
-	
-		// Stuff that seems to work //
-
-		// Open the Image (Using function I wrote that just calls openImage())
-		auto img = myOpenImage(filename).get();
-
-		// Get Compression Algorithm from image
-		BiometricEvaluation::Image::CompressionAlgorithm compalg = 
-		(*img).getCompressionAlgorithm();
-
-		// Get Resolution of Image 
-		BiometricEvaluation::Image::Resolution res = 
-		(*img).getResolution();
-
-		// Get Data of Image -- Not Raw -- Is encoded
-		BiometricEvaluation::Memory::uint8Array data = 
-		(*img).getData();
-
-		// Get Colordepth
-		uint32_t colordepth = (*img).getColorDepth();
-
-		// Get bitdepth
-		uint16_t bitdepth = (*img).getBitDepth();
-
-		// Determines if it has an alpha channel
-		bool hasalpha = (*img).hasAlphaChannel();
-
-		// Gets Identifier/Filename
-		std::string id = (*img).getIdentifier();
-
-		// Stuff that seems to not work //
-
-		// Executing this results in a calling a pure virtural function error - or 
-		// segfaults - depending on true or false
-		// BiometricEvaluation::Memory::uint8Array rawdata = 
-		// (*img).getRawData(false);
-
-		// Segfaults
-		// BiometricEvaluation::Memory::uint8Array rawgrayscale =
-		// (*img).getRawGrayscaleData(1);
-
-		// This says its protected: - but you can just do .getData().size()?
-		// uint64_t datasize = (*img).getDataSize();
-	
-		// For some reason returns a memory address
-		// Get Dimensions of Image
-		// BiometricEvaluation::Image::Size dims = 
-		// (*img).getDimensions();
-
-		// Gets Status Callback - Also returns a memory address - how to parse?
-		// BiometricEvaluation::Image::Image::statusCallback_t status = 
-		// (*img).getStatusCallback();
-
-		// Print out Compression Algorithm - have to cast it because it is an enum
-	
-		// Print out Image Identifier
-		std::cout << "ID/Filename: " << id << "\n";
-
-		std::cout << "Compression Algorithm: " << 
-		static_cast<std::underlying_type
-		<BiometricEvaluation::Image::CompressionAlgorithm>::type>(compalg) 
-		<< "\n";
-
-		// Print out Resolution of Image
-		std::cout << "Resolution of Image: " << res << "\n";
-
-		// Print out ColorDepth of Image
-		std::cout << "Color Depth of Image: " << colordepth << "\n";
-
-		// Print out BitDepth of Image
-		std::cout << "Bit Depth of Image: " << bitdepth << "\n";
-
-		// Print out Data Size of Image
-		std::cout << "Data Size of Image: " << data.size() << "\n";
-
-		// Print out Whether it has an alpha channel
-		std::cout << "Alpha Channel: " << hasalpha << "\n";
-	
+		std::string output = generateInfo(filename);
+		std::cout << output << "\n";	
 	} else {
 		// Its a Directory
 		DIR *dr;
@@ -120,69 +102,41 @@ int main( int argc, char** argv )
 		if (dr) {
 			while ((en = readdir(dr)) != NULL) {
 				try {
-
 					std::string path = filename + en->d_name;
+					std::string output = generateInfo(path);
 
-					auto img = myOpenImage(path).get();
+					std::cout << output << "\n";
 
-					BiometricEvaluation::Image::CompressionAlgorithm compalg = 
-					(*img).getCompressionAlgorithm();
-
-					// Get Resolution of Image 
-					BiometricEvaluation::Image::Resolution res = 
-					(*img).getResolution();
-
-					// Get Data of Image -- Not Raw -- Is encoded
-					BiometricEvaluation::Memory::uint8Array data = 
-					(*img).getData();
-
-					// Get Colordepth
-					uint32_t colordepth = (*img).getColorDepth();
-
-					// Get bitdepth
-					uint16_t bitdepth = (*img).getBitDepth();
-
-					// Determines if it has an alpha channel
-					bool hasalpha = (*img).hasAlphaChannel();
-
-					// Gets Identifier/Filename
-					std::string id = (*img).getIdentifier();
-
-					// Print out Image Identifier
-					std::cout << "ID/Filename: " << id << "\n";
-
-					std::cout << "Compression Algorithm: " << 
-					static_cast<std::underlying_type
-					<BiometricEvaluation::Image::CompressionAlgorithm>::type>
-					(compalg) << "\n";
-
-					// Print out Resolution of Image
-					std::cout << "Resolution of Image: " << res << "\n";
-
-					// Print out ColorDepth of Image
-					std::cout << "Color Depth of Image: " << colordepth << "\n";
-
-					// Print out BitDepth of Image
-					std::cout << "Bit Depth of Image: " << bitdepth << "\n";
-
-					// Print out Data Size of Image
-					std::cout << "Data Size of Image: " << data.size() << "\n";
-
-					// Print out Whether it has an alpha channel
-					std::cout << "Alpha Channel: " << hasalpha << "\n";
-
-					std::cout << "\n";
-
-				} catch (BiometricEvaluation::Error::StrategyError& e) {
+				} catch (BE::Error::StrategyError& e) {
 					std::cerr << e.what() << "\n" << "\n";
-
 				}
-
 			}
 			closedir(dr);
 		}
-
 	}
-
 	return 0;
 }
+		
+		// Stuff That doesn't seem to work:
+
+		// Executing this results in a calling a pure virtural function error - 
+		// or segfaults - depending on true or false
+		// BE::Memory::uint8Array rawdata = 
+		// (*img).getRawData(false);
+
+		// Segfaults
+		// BE::Memory::uint8Array rawgrayscale =
+		// (*img).getRawGrayscaleData(1);
+
+		// This says its protected: - but you can just do .getData().size()?
+		// uint64_t datasize = (*img).getDataSize();
+	
+		// For some reason returns a memory address
+		// Get Dimensions of Image
+		// BE::Image::Size dims = 
+		// (*img).getDimensions();
+
+		// Gets Status Callback - Also returns a memory address - how to parse?
+		// BE::Image::Image::statusCallback_t status = 
+		// (*img).getStatusCallback();
+
