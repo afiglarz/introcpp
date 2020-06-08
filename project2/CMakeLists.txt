@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.11)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 project(project2_cmake)
 
 add_executable(project2_cmake)
@@ -15,7 +18,7 @@ target_link_libraries(project2_cmake PUBLIC biomeval)
 
 set_target_properties(project2_cmake PROPERTIES
     # Set RPATH to installed version of libs
-    INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+    INSTALL_RPATH ${PROJECT_SOURCE_DIR}/build/biomeval/lib)
 
 set_target_properties(project2_cmake PROPERTIES
     BUILD_WITH_INSTALL_RPATH TRUE)
@@ -25,3 +28,8 @@ target_compile_options(project2_cmake PRIVATE
 
 install(TARGETS project2_cmake
     RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/../${CMAKE_INSTALL_BINDIR})
+
+set_target_properties(project2_cmake PROPERTIES
+    BUILD_WITH_INSTALL_RPATH TRUE
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED TRUE)
