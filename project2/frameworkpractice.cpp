@@ -56,9 +56,37 @@ generateInfo(
 	// Prints Filename
 	output = output + "ID/Filename: " + id + "\n";
 	// Prints Compression Algorithm
-	output = output + "Compression Algorithm: " +
-	std::to_string(static_cast<std::underlying_type
-	<BE::Image::CompressionAlgorithm>::type>(compalg)) + "\n";
+
+	auto compalg_cast = static_cast<std::underlying_type
+	<BE::Image::CompressionAlgorithm>::type>(compalg);
+
+	std::string compalg_castclass{};
+	// Could Greg Explain what these are - Facsimile, None, NetPBM?
+	if (compalg_cast == 0) {
+		compalg_castclass = "None";
+	} else if (compalg_cast == 1) {
+		compalg_castclass = "Facsimile";
+	} else if (compalg_cast == 2) {
+		compalg_castclass = "WSQ20";
+	} else if (compalg_cast == 3) {
+		compalg_castclass = "JPEGB";
+	} else if (compalg_cast == 4) {
+		compalg_castclass = "JPEGL";
+	} else if (compalg_cast == 5) {
+		compalg_castclass = "JP2";
+	} else if (compalg_cast == 6) {
+		compalg_castclass = "JP2L";
+	} else if (compalg_cast == 7) {
+		compalg_castclass = "PNG";
+	} else if (compalg_cast == 8) {
+		compalg_castclass = "NetPBM";
+	} else if (compalg_cast == 9) {
+		compalg_castclass = "BMP";
+	} else if (compalg_cast == 10) {
+		compalg_castclass = "TIFF";
+	}
+
+	output = output + "Compression Algorithm: " + compalg_castclass + "\n";
 	// Pint out Dimensions of Image
 	output = output + "Dimensions: " + to_string(dims) + "\n";
 	// Print out Resolution of Image
@@ -99,7 +127,10 @@ int main( int argc, char** argv )
 
 	} else {
 		// Its a directory
-		
+		// Removes additional slashes for directories
+		auto slash_pos = filename.find("/");
+		filename.erase(slash_pos);
+
 		DIR *dr;
 		struct dirent *en;
 		dr = opendir(filename.c_str());
